@@ -1,0 +1,70 @@
+{
+  "en": {
+    "step1": {
+      "title": "Configure panel",
+      "description": "Enter credentials to connect to panel",
+      "form": {
+        "url_label": "Panel URL",
+        "username_label": "Username",
+        "password_label": "Password",
+        "submit_label": "Continue"
+      },
+      "error": "Configure panel error"
+    },
+    "step2": {
+      "title": "Configure API",
+      "description": "Enter credentials to connect to API",
+      "form": {
+        "url_label": "API URL",
+        "username_label": "Username / email",
+        "password_label": "Password",
+        "station_label": "Station ID",
+        "submit_label": "Finish"
+      },
+      "error": "Configure API error"
+    },
+    "step3": {
+      "title": "Agent status",
+      "description": "Current agent connection status",
+      "panel_label": "Panel status",
+      "api_label": "API status",
+      "station_label": "Station ID",
+      "logout_label": "Logout",
+      "error": "Something went wrong"
+    }
+  },
+  "he": {
+    "step1": {
+      "title": "הגדרת מערכת הפאנל",
+      "description": "הזן פרטי התחברות כדי להתחבר לפאנל",
+      "form": {
+        "url_label": "כתובת פאנל",
+        "username_label": "שם משתמש",
+        "password_label": "סיסמה",
+        "submit_label": "המשך"
+      },
+      "error": "שגיאה בהגדרת הפאנל"
+    },
+    "step2": {
+      "title": "הגדרת מערכת API",
+      "description": "הזן פרטי התחברות כדי להתחבר לשרת",
+      "form": {
+        "url_label": "כתובת API",
+        "username_label": "שם משתמש / אימייל",
+        "password_label": "סיסמה",
+        "station_label": "מזהה תחנה",
+        "submit_label": "סיום"
+      },
+      "error": "שגיאה בהגדרת ה-API"
+    },
+    "step3": {
+      "title": "מצב המערכת",
+      "description": "סטטוס חיבור נוכחי של הסוכן",
+      "panel_label": "סטטוס פאנל",
+      "api_label": "סטטוס API",
+      "station_label": "מזהה תחנה",
+      "logout_label": "התנתקות",
+      "error": "אירעה שגיאה"
+    }
+  }
+}
