@@ -86,7 +86,7 @@ def validate_card(config, card, reader):
             headers={"Authorization": f"Token {config['api_token']}"},
             timeout=TIMEOUT,
         )
-        return r.status_code == 200
+        return r.status_code in [200, 201]
     except:
         return False
 

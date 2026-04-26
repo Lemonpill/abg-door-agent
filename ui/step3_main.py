@@ -112,11 +112,10 @@ class MainWindow:
 
                 allowed = True
 
-                if reader != "OUT":
-                    if self.server_ok:
-                        allowed = validate_card(self.config, card, reader)
-                    else:
-                        allowed = not is_night()
+                if self.server_ok:
+                    allowed = validate_card(self.config, card, reader)
+                else:
+                    allowed = not is_night()
 
                 if allowed:
                     open_door(self.config)
