@@ -1,7 +1,8 @@
+import json
 import requests
 import base64
 
-TIMEOUT = 2
+TIMEOUT = 5
 
 
 # ---- PANEL ----
@@ -115,8 +116,6 @@ def fetch_event(config, last_id):
         if "#GLEvent" not in text:
             return None, last_id
 
-        import json
-
         json_str = text.split("-->")[1].split("</response")[0].strip()
         event = json.loads(json_str)
 
@@ -127,3 +126,32 @@ def fetch_event(config, last_id):
         return event, new_id
     except:
         return None, last_id
+
+
+# ---- ACS ----
+
+
+def validate_acs_event(config: dict, event: dict) -> dict:
+    res_code = None
+    try:
+        gate = config["station"]
+        r = requests.post(
+            f"{config['api_url']}/api/acs/smartgates/{gate}/events",
+            json=event,
+            headers={"Authorization": f"Token {config['api_token']}"},
+            timeout=TIMEOUT,
+        )
+        res_code = r.status_code
+        return r.json()
+    except:
+        return {"allow": False, "error": f"Response code {res_code}"}
+
+
+def validate_event_card(event: dict):
+    card = event.get("Card", None)
+    return card and card != "-"
+
+
+def validate_event_reader(event: dict):
+    reader = event.get("Reader", None)
+    return reader in ("IN", "OUT")

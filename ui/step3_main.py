@@ -4,7 +4,15 @@ import threading
 import time
 from datetime import datetime
 from config import CONFIG_PATH
-from services import ping_api, fetch_event, validate_card, open_door
+from services import (
+    ping_api,
+    fetch_event,
+    validate_card,
+    open_door,
+    validate_acs_event,
+    validate_event_reader,
+    validate_event_card,
+)
 
 
 def is_night():
@@ -71,6 +79,10 @@ class MainWindow:
         # Logout button
         tk.Button(self.root, text=self.texts["logout_label"], command=self.logout).pack(pady=10)
 
+        # Error
+        self.error = tk.Label(self.root, fg="red")
+        self.error.pack(pady=5)
+
     def draw(self):
         self.server_dot.delete("all")
         self.panel_dot.delete("all")
@@ -93,33 +105,48 @@ class MainWindow:
         while True:
             event, new_id = fetch_event(self.config, self.last_event_id)
 
-            same_event = new_id == self.last_event_id
-            self.last_event_id = new_id
-
             # -----------------------------
             # 1. PANEL HEALTH SIGNAL
             # -----------------------------
-            if event or same_event:
+            if new_id is not None:
                 self.panel_ok = True
                 self.last_panel_ok = time.time()
 
+            is_new_event = event and new_id != self.last_event_id
+
+            # update last seen always (for polling cursor)
+            if new_id is not None:
+                self.last_event_id = new_id
+
             # -----------------------------
-            # 2. ONLY PROCESS REAL EVENTS
+            # 2. ONLY PROCESS NEW EVENTS
             # -----------------------------
-            if event:
-                reader = event.get("Reader")
-                card = event.get("Card")
+            if is_new_event:
+                reader_valid = validate_event_reader(event)
+                card_valid = validate_event_card(event)
 
-                allowed = True
+                if card_valid and reader_valid:
+                    reader = event.get("Reader")
 
-                if self.server_ok:
-                    allowed = validate_card(self.config, card, reader)
-                else:
-                    allowed = not is_night()
+                    if not self.server_ok:
+                        if reader == "OUT":
+                            open_door(self.config)
+                    else:
+                        data = validate_acs_event(self.config, event)
 
-                if allowed:
-                    open_door(self.config)
+                        if reader == "OUT":
+                            open_door(self.config)
+                        elif data:
+                            nighttime = is_night()
+                            api_allow = data.get("allow")
+                            api_error = data.get("error")
 
+                            if api_allow and not nighttime:
+                                open_door(self.config)
+
+                            self.error.config(text=api_error)
+                        else:
+                            self.error.config(text=self.texts["error"])
             # -----------------------------
             # 3. PANEL DOWN DETECTION
             # -----------------------------
